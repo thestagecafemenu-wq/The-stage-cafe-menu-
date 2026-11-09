@@ -7,7 +7,7 @@ A digital menu for browsing our food and beverages, with prices shown in Sri Lan
 ## 📍 Contact & Location
 
 - **Location:** Kirillawala, Sri Lanka
-- **Telephone:** 0787533889
+- **Telephone:** 0114383867
 
 ## 🍽️ Menu
 
