@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#082b52">
+<title>The Stage Cafe & Cake Bar | Digital Menu</title>
+<style>
+:root{--navy:#082b52;--blue:#1265a8;--sky:#eaf4fc;--ink:#172536;--muted:#64748b;--line:#e5edf5}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f8fc;color:var(--ink)}
+header{background:linear-gradient(135deg,#061d38,#0d5792);color:white;padding:34px 18px 26px;text-align:center}
+.logo{font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#c7e6ff}
+h1{font-family:Georgia,serif;font-size:clamp(30px,6vw,48px);margin:10px 0 4px}
+header p{margin:0;color:#d6eaff}
+.wrap{max-width:1050px;margin:auto;padding:20px 15px 50px}
+.tools{position:sticky;top:0;background:#f4f8fc;padding:10px 0;z-index:2}
+input{width:100%;padding:14px 16px;border:1px solid #cbd9e8;border-radius:12px;font-size:16px;outline:none}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #1265a822}
+nav{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:thin}
+nav button{white-space:nowrap;border:1px solid #cbd9e8;background:white;color:var(--navy);padding:9px 14px;border-radius:22px;font-weight:700;cursor:pointer}
+nav button.active,nav button:hover{background:var(--blue);color:white;border-color:var(--blue)}
+.section{margin:22px 0 28px;scroll-margin-top:145px}
+.section h2{font-size:21px;color:var(--navy);border-bottom:2px solid #cfe3f5;padding-bottom:10px;margin:0 0 12px}
+.items{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.item{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 12px #173b5b10}
+.food-photo{display:block;width:100%;height:155px;object-fit:cover;background:#eaf1f8}
+.item-info{padding:13px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-height:74px}
+.name{font-weight:700;line-height:1.35}.desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4}
+.price{white-space:nowrap;font-weight:800;color:var(--blue);font-size:14px}
+footer{text-align:center;color:var(--muted);padding:24px 10px;font-size:13px}
+.empty{text-align:center;padding:35px;color:var(--muted);display:none}
+@media(max-width:520px){.wrap{padding-left:12px;padding-right:12px}.items{grid-template-columns:1fr}.section h2{font-size:19px}.food-photo{height:180px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Welcome to</div>
+  <h1>The Stage Cafe</h1>
+  <p>&amp; Cake Bar · Digital Menu</p>
+</header>
+<main class="wrap">
+  <div class="tools">
+    <input id="search" type="search" placeholder="Search food, drinks..." aria-label="Search menu">
+    <nav id="categories"></nav>
+  </div>
+  <div id="menu"></div>
+  <div id="empty" class="empty">No menu items found. Try another search.</div>
+</main>
+<footer>Thank you for visiting The Stage Cafe &amp; Cake Bar</footer>
+<script>
+const menu = [
+["Breakfast",[
+["English Breakfast","1800","Bacon, sausages, baked beans, grilled tomato, sautéed mushroom, toast butter with two fried eggs"]
+]],
+["Snacks",[
+["Stage Burger","1060"],["Pulled Chicken Burger","1800"],["Vegetable Spring Roll","900"],["Hot Dog","920"]
+]],
+["Bites",[
+["Kochchi Sausages","1320"],["Sausages Grilled / Devilled (06 Nos)","1300"],["French Fries","1180"]
+]],
+["From The Soup Kettle",[
+["Vegetable Broth","550"],["Cream of Chicken and Sweet Corn","780"],["Tom Yam Soup (Sea Food)","860"],["Egg Broth","640"]
+]],
+["Freshly Made Salads",[
+["Garden Salad","800"],["Chicken Hawaiian","1200"],["Mixed Salad","1080"]
+]],
+["Fish",[
+["Devilled / Fried / Sweet & Sour","2000"],["Hot Garlic Sauce / Stew","2000"],["Hot Butter Fish","2000"],["Fish Egg","2150"]
+]],
+["Cuttle Fish",[
+["Devilled / Black Bean Sauce / Hot Butter / Hot Garlic Sauce","2080"]
+]],
+["Prawns",[
+["Devilled / Sweet & Sour / Sizzling / Hot Butter / Hot Garlic Sauce","2350"],["Tiger prawns","2760"]
+]],
+["Chicken",[
+["Devilled / Garlic / Stew","1620"],["Sizzling / Chilli Cashew Nut","1750"]
+]],
+["Boneless Chicken",[
+["Devilled / Garlic / Stew","1980"],["Sizzling / Chilli Cashew Nut","2140"]
+]],
+["Mutton",[
+["Devilled / Stew / Pepper","3460"]
+]],
+["Pork Kassler",[
+["Devilled / Grilled","3460"],["Roast Pork Loin with Pepper Sauce","2760"]
+]],
+["Mix Grill",[
+["Mix Grill","5200","Roast pork, fish, prawns, cuttle fish, kochchi sausages, bockwurst, chicken drumstick, fried egg, pineapple & potato wedges"]
+]],
+["Garden Fresh",[
+["Vegetable Chopsuey","1780"],["Mushroom Hot Butter / Devilled","1750"],["Button Mushroom Devilled","2580"]
+]],
+["Chopsuey Rice / Noodles",[
+["Vegetable Chopsuey Rice / Noodles","2050"],["Chicken Chopsuey Rice / Noodles","2600"],["Seafood Chopsuey Rice / Noodles","3120"],["Mixed Chopsuey Rice / Noodles","3500"]
+]],
+["Chopsuey",[
+["Vegetable Chopsuey","1780"],["Chicken Chopsuey","2200"],["Seafood Chopsuey","2700"],["Mixed Chopsuey","3150"]
+]],
+["Rice / Noodles",[
+["Chicken Fried Rice / Noodles","1660"],["Sea Food Fried Rice / Noodles","1800"],["Mixed Fried Rice / Noodles","2200","Chicken / sea food / egg / sausages"],["Egg Fried Rice / Noodles","1350"],["Vegetable Fried Rice / Noodles","1200"],["Mongolian Rice / Noodles","2350"],["Nasi Goreng Rice","2250"]
+]],
+["Thai Rice / Noodles",[
+["Thai Sea Food Rice / Noodles","2160"],["Thai Special Rice / Noodles","2550","Chicken & sea food"]
+]],
+["Omelets (Eggs 03 Nos)",[
+["Savory Omelets","780"],["Cheese Omelets","1050"],["Chicken Omelets","1320"],["Cheese & Chicken Omelets","1550"],["Fried Egg (01 Nos)","150"]
+]],
+["Cheese Kottu",[
+["Vegetable","1400"],["Egg","1500"],["Chicken","1700"],["Fish","1700"],["Sea Food","1800"],["Mixed","2100"]
+]],
+["Sara Kottu (Hot & Spicy)",[
+["Egg","1380"],["Chicken","1500"],["Fish","1500"],["Sea Food","1650"],["Mixed","1950"]
+]],
+["Pasta & Spaghetti",[
+["Pasta Carbonara","2100","Minute-cooked penne pasta with white sauce, fresh cream, bacon diced, onion, egg yolk"],["Pasta Carbonara Chicken","2000"],["Pasta Marinara","1950","Minute-cooked penne pasta in tomato concassé & sea food"],["Pasta / Spaghetti Napolitano","1450","Spaghetti / pasta served with traditional Italian sauce"],["Mamma Mia","2150","Spaghetti / pasta served with sea food, hot & spicy sauce"]
+]],
+["Desserts",[
+["Cream Caramel","300"],["Watalappan","300"],["02 Scoop Ice Cream","520"],["Affogato","950"],["Chocolate Ganache with Ice Cream","520"]
+]],
+["Soft Drinks",[
+["Sprite","260"],["Coca Cola","260"],["EGB","260"],["Lime Coke / Lime Sprite / Lime Soda","520"]
+]],
+["Cold Beverage",[
+["Ice Laté","900"],["Vanilla Ice Laté","950"],["Caramel Ice Laté","1060"],["Cafe Mocha","950"],["Ice Lemon Tea","600"],["Ice Coffee","720"],["Milk Shake (Chocolate / Vanilla / Strawberry / Caramel)","880"],["Fresh Fruit Juice (Papaya / Watermelon / Pineapple / Lime)","660"],["Strawberry / Mint Mojito","820"],["Mandarin Juice","660"],["Mixed Fruit Juice","660"],["Frappe (Mocha / Vanilla / Caramel)","820"]
+]],
+["Drinking Water",[
+["Mineral Water S","90"],["Mineral Water M","120"]
+]],
+["Hot Beverage",[
+["Masala Tea","400"],["Milk Coffee","400"],["Black Coffee","260"],["Cappuccino","700"],["Café Laté","950"],["Café Mocha","950"],["Espresso / Americano","550"],["Hot Chocolate","950"],["Black Tea","200"]
+]]
+];
+
+// Photo search tags are chosen automatically from each item's name.
+// A unique lock number is used for each menu item to avoid repeating one image.
+let photoNumber=0;
+menu.forEach(([category,items])=>items.forEach(item=>item.push(++photoNumber)));
+
+function photoTags(name,category){
+ const s=(name+' '+category).toLowerCase();
+ if(/burger|hot dog/.test(s))return 'food,burger';
+ if(/spring roll/.test(s))return 'food,spring-roll';
+ if(/sausage|bockwurst/.test(s))return 'food,sausage';
+ if(/fries|potato/.test(s))return 'food,french-fries';
+ if(/soup|broth|tom yam/.test(s))return 'food,soup';
+ if(/salad/.test(s))return 'food,salad';
+ if(/cuttle|calamari/.test(s))return 'food,calamari';
+ if(/prawn|sea food|seafood/.test(s))return 'food,prawns';
+ if(/fish/.test(s))return 'food,fish-dish';
+ if(/chicken/.test(s))return 'food,chicken-dish';
+ if(/mutton|pork|bacon/.test(s))return 'food,grilled-meat';
+ if(/mushroom/.test(s))return 'food,mushroom';
+ if(/vegetable|garden/.test(s))return 'food,vegetable-dish';
+ if(/rice|nasi/.test(s))return 'food,fried-rice';
+ if(/noodle|chopsuey/.test(s))return 'food,noodles';
+ if(/kottu/.test(s))return 'food,kottu';
+ if(/omelet|omelette|fried egg/.test(s))return 'food,omelette';
+ if(/pasta|spaghetti/.test(s))return 'food,pasta';
+ if(/dessert|caramel|watalappan|ice cream|ganache|affogato/.test(s))return 'food,dessert';
+ if(/cola|sprite|egb|soda/.test(s))return 'drink,soft-drink';
+ if(/coffee|lat[eé]|mocha|cappuccino|espresso|frappe/.test(s))return 'drink,coffee';
+ if(/juice|mojito|lemon|milk shake/.test(s))return 'drink,fruit-juice';
+ if(/water/.test(s))return 'drink,water';
+ if(/tea|masala/.test(s))return 'drink,tea';
+ return 'food,restaurant-meal';
+}
+
+const menuEl=document.getElementById('menu'), nav=document.getElementById('categories'), search=document.getElementById('search'), empty=document.getElementById('empty');
+let active='All';
+function render(){
+ const q=search.value.trim().toLowerCase();
+ nav.innerHTML='';
+ ['All',...menu.map(x=>x[0])].forEach(cat=>{
+  const b=document.createElement('button');b.textContent=cat;b.className=active===cat?'active':'';
+  b.onclick=()=>{active=cat;render();};nav.appendChild(b);
+ });
+ menuEl.innerHTML='';let count=0;
+ menu.forEach(([cat,items])=>{
+  if(active!=='All'&&active!==cat)return;
+  const found=items.filter(([n,p,d=''])=>(n+' '+d+' '+cat).toLowerCase().includes(q));
+  if(!found.length)return;count+=found.length;
+  const sec=document.createElement('section');sec.className='section';
+  const h=document.createElement('h2');h.textContent=cat;sec.appendChild(h);
+  const grid=document.createElement('div');grid.className='items';
+  found.forEach(([name,price,desc,id])=>{
+   const card=document.createElement('article');card.className='item';
+   const photo=document.createElement('img');
+   photo.className='food-photo';photo.loading='lazy';photo.alt=name+' food photo';
+   // Stable image URLs from Unsplash; rotate images so each menu item gets a photo.
+   const photoPools={
+    coffee:['photo-1509042239860-f550ce710b93','photo-1495474472287-4d71bcdd2085','photo-1461023058943-07fcbe16d735','photo-1517701604599-bb29b565090c'],
+    burger:['photo-1568901346375-23c9450c58cd','photo-1561758033-d89a9ad46330','photo-1561758033-d89a9ad46330'],
+    rice:['photo-1603133872878-684f208fb84b','photo-1512058564366-18510be2db19','photo-1512058564366-18510be2db19'],
+    cake:['photo-1578985545062-69928b1d9587','photo-1488477181946-6428a0291777','photo-1565958011703-44f9829ba187'],
+    general:['photo-1546069901-ba9599a7e63c','photo-1547592180-85f173990554','photo-1512621776951-a57141f2eefd','photo-1512621776951-a57141f2eefd']
+   };
+   const kind=/coffee|lat[eé]|mocha|cappuccino|espresso|tea|beverage|drink|juice|mojito|shake|water/i.test(name+' '+cat)?'coffee':/burger|sandwich|hot dog/i.test(name+' '+cat)?'burger':/rice|nasi|kottu|noodle/i.test(name+' '+cat)?'rice':/cake|dessert|ice cream|watalappan|pudding/i.test(name+' '+cat)?'cake':'general';
+   const pool=photoPools[kind];
+   const photoId=pool[(Number(id)-1)%pool.length].replace(/[^a-zA-Z0-9-]/g,'');
+   photo.src='https://images.unsplash.com/'+photoId+'?auto=format&fit=crop&w=800&q=80';
+   photo.onerror=()=>{photo.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80';photo.onerror=()=>{photo.style.display='none';};};
+   const info=document.createElement('div');info.className='item-info';
+   const left=document.createElement('div');
+   const nm=document.createElement('div');nm.className='name';nm.textContent=name;left.appendChild(nm);
+   if(desc){const de=document.createElement('div');de.className='desc';de.textContent=desc;left.appendChild(de);}
+   const pr=document.createElement('div');pr.className='price';pr.textContent='Rs. '+Number(price).toLocaleString('en-LK')+' /=';
+   info.append(left,pr);card.append(photo,info);grid.appendChild(card);
+  });
+  sec.appendChild(grid);menuEl.appendChild(sec);
+ });
+ empty.style.display=count?'none':'block';
+}
+search.addEventListener('input',render);render();
+</script>
+</body>
+</html>
